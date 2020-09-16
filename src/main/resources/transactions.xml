@@ -1,0 +1,26 @@
+<TransactionList>
+    <Transaction>
+        <Description>Cash withdrawal</Description>
+        <Direction>Debit</Direction>
+        <Amount>
+            <Value>150</Value>
+            <Currency>JOD</Currency>
+        </Amount>
+    </Transaction>
+    <Transaction>
+        <Description>Salary</Description>
+        <Direction>Credit</Direction>
+        <Amount>
+            <Value>1000</Value>
+            <Currency>USD</Currency>
+        </Amount>
+    </Transaction>
+    <Transaction>
+        <Description>Bill Payment</Description>
+        <Direction>Debit</Direction>
+        <Amount>
+            <Value>20</Value>
+            <Currency>JOD</Currency>
+        </Amount>
+    </Transaction>
+</TransactionList>
