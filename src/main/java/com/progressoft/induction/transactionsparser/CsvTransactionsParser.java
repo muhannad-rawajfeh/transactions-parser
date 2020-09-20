@@ -13,6 +13,24 @@ import java.util.logging.Logger;
 import java.math.BigDecimal;
 
 public class CSVParser implements TransactionParser {
+    enum Directions {
+        Credit, Debit;
+    }
+    public boolean directionCheck (String testDirection) {
+        for (Directions d : Directions.values() ) {
+            if (d.name().equals(testDirection)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //file type validation
+    public boolean fileTypeCheck (File file) {
+        if (!file.getName().endsWith("csv")) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public List<Transaction> parse(File transactionsFile) {
@@ -20,11 +38,11 @@ public class CSVParser implements TransactionParser {
         String line = "";
         int rowNumber = 0;
         List<Transaction> transactions = new ArrayList<>();
-        
-        try {   //file type validation
-                if (!transactionsFile.getName().endsWith("csv")) {
-                    throw new FontFormatException("Invalid File Type");
-                }
+
+        try {
+            if (fileTypeCheck(transactionsFile)) {
+                throw new FontFormatException("");
+            }
 
             BufferedReader csvReader = new BufferedReader(new FileReader(transactionsFile));
 
@@ -48,13 +66,13 @@ public class CSVParser implements TransactionParser {
                     System.out.println("Missing Direction In Row No. " + rowNumber);
                 }
                 //direction input validation
-                else if (values[1].matches("Debit|Credit")) {
+                else if (directionCheck(values[1])) {
                     temp.setDirection(values[1]);
                 }
                 else {
                     throw new InputMismatchException();
                 }
-                temp.setAmount(new BigDecimal(values[2]) );
+                temp.setAmount(new BigDecimal(values[2]));
                 //currency validation
                 if (values[3].matches("JOD|USD|EUR")){
                     temp.setCurrency(values[3]);
@@ -70,13 +88,13 @@ public class CSVParser implements TransactionParser {
         } catch (IOException ex) {
             Logger.getLogger(CSVParser.class.getName()).log(Level.SEVERE, null, ex);
         //amount validation
-        } catch (IllegalArgumentException ex) {
+        } /*catch (IllegalArgumentException ex) {
             System.out.println("Invalid Amount In Row No. " + rowNumber);
-        } catch (ArrayIndexOutOfBoundsException ex) {
+        }*/ catch (ArrayIndexOutOfBoundsException ex) {
             System.out.println("Invalid Number Of Fields In Row No. " + rowNumber);
         } catch (InputMismatchException ex) {
             System.out.println("Invalid Direction In Row No. " + rowNumber);
-        } catch (FontFormatException e) {
+        } catch (FontFormatException ex) {
             System.out.println("Invalid File Type");
         }
 
