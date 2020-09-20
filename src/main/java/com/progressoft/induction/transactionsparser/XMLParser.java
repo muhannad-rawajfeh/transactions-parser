@@ -100,7 +100,7 @@ public class XMLParser implements TransactionParser {
                     }
                     
                     if (bCurrency) {
-                        transaction.setCurrency(new String(ch, start, length));
+                        //transaction.setCurrency(new String(ch, start, length));
                     }
                 }
                 

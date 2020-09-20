@@ -6,9 +6,11 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-        XMLParser p = new XMLParser();
-        List<Transaction> parse = p.parse(new File("resources\\transactions.xml"));
-        for(Transaction ob: parse){
+        String path = "/home/user/IdeaProjects/transactionsparser/src/main/resources/transactions.csv";
+        File file = new File(path);
+        CsvTransactionsParser p = new CsvTransactionsParser(4);
+        List<Transaction> parse = p.parse(file);
+        for(Transaction ob: parse) {
             System.out.println(ob.toString());
         }
     }
