@@ -12,11 +12,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.math.BigDecimal;
 
-public class CSVParser implements TransactionParser {
+public class CsvTransactionsParser implements TransactionParser {
+    int numberOfFields;
     enum Directions {
         Credit, Debit;
     }
-    public boolean directionCheck (String testDirection) {
+    public boolean is_validDirection (String testDirection) {
         for (Directions d : Directions.values() ) {
             if (d.name().equals(testDirection)) {
                 return true;
@@ -24,12 +25,17 @@ public class CSVParser implements TransactionParser {
         }
         return false;
     }
-    //file type validation
-    public boolean fileTypeCheck (File file) {
-        if (!file.getName().endsWith("csv")) {
+    public boolean is_csvFile (File file) {
+        if (file.getName().endsWith("csv")) {
             return true;
         }
         return false;
+    }
+    public Currency setValidCurrency (String currency) {
+        return Currency.getInstance(currency);
+    }
+    CsvTransactionsParser(int numberOfFields) {
+        this.numberOfFields = numberOfFields;
     }
 
     @Override
@@ -40,7 +46,7 @@ public class CSVParser implements TransactionParser {
         List<Transaction> transactions = new ArrayList<>();
 
         try {
-            if (fileTypeCheck(transactionsFile)) {
+            if (!is_csvFile(transactionsFile)) {
                 throw new FontFormatException("");
             }
 
@@ -51,7 +57,7 @@ public class CSVParser implements TransactionParser {
                 String[] values = line.split(",");
                 Transaction temp = new Transaction();
                 //no. of fields validation
-                if (values.length != 4) {
+                if (values.length != numberOfFields) {
                     throw new ArrayIndexOutOfBoundsException();
                 }
                 //description mandatory validation
@@ -66,7 +72,7 @@ public class CSVParser implements TransactionParser {
                     System.out.println("Missing Direction In Row No. " + rowNumber);
                 }
                 //direction input validation
-                else if (directionCheck(values[1])) {
+                else if (is_validDirection(values[1])) {
                     temp.setDirection(values[1]);
                 }
                 else {
@@ -74,24 +80,20 @@ public class CSVParser implements TransactionParser {
                 }
                 temp.setAmount(new BigDecimal(values[2]));
                 //currency validation
-                if (values[3].matches("JOD|USD|EUR")){
-                    temp.setCurrency(values[3]);
-                }
-                else {
-                    System.out.println("Invalid Currency In Row No. " + rowNumber);
-                }
+
+                temp.setCurrency(setValidCurrency(values[3]));
                 transactions.add(temp);
             }
             
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(CSVParser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(CSVParser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
         //amount validation
-        } /*catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             System.out.println("Invalid Amount In Row No. " + rowNumber);
-        }*/ catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("Invalid Number Of Fields In Row No. " + rowNumber);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("Invalid Number Of Fields");
         } catch (InputMismatchException ex) {
             System.out.println("Invalid Direction In Row No. " + rowNumber);
         } catch (FontFormatException ex) {

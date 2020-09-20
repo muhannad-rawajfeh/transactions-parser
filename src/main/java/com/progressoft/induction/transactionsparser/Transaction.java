@@ -1,6 +1,7 @@
 package com.progressoft.induction.transactionsparser;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Objects;
 
 public class Transaction {
@@ -8,7 +9,7 @@ public class Transaction {
     private String description;
     private String direction;
     private BigDecimal amount;
-    private String currency;
+    private Currency currency;
 
     public String getDescription() {
         return description;
@@ -34,11 +35,11 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public String getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    public void setCurrency(Currency currency) {
         this.currency = currency;
     }
 
