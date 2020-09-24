@@ -6,34 +6,41 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.math.BigDecimal;
 
 public class CsvTransactionsParser implements TransactionParser {
     private int number_of_fields;
-    public enum Directions {
-        Credit, Debit;
-    }
-    public boolean isValidDirection (String testDirection) {
-        for (Directions d : Directions.values() ) {
+
+    public boolean isValidDirection(String testDirection) {
+        for (Direction d : Direction.values()) {
             if (d.name().equals(testDirection)) {
                 return true;
             }
         }
         return false;
     }
-    public boolean isCsvFile (File file) {
+
+    public enum Direction {
+        Credit, Debit;
+    }
+
+    public boolean isCsvFile(File file) {
         if (file.getName().endsWith("csv")) {
             return true;
         }
         return false;
     }
-    public Currency setValidCurrency (String currency) {
+
+    public Currency setValidCurrency(String currency) {
         return Currency.getInstance(currency);
     }
+
     CsvTransactionsParser(int number_of_fields) {
         this.number_of_fields = number_of_fields;
     }
