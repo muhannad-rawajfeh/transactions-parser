@@ -13,11 +13,11 @@ import java.util.logging.Logger;
 import java.math.BigDecimal;
 
 public class CsvTransactionsParser implements TransactionParser {
-    int numberOfFields;
-    enum Directions {
+    private int number_of_fields;
+    public enum Directions {
         Credit, Debit;
     }
-    public boolean is_validDirection (String testDirection) {
+    public boolean isValidDirection (String testDirection) {
         for (Directions d : Directions.values() ) {
             if (d.name().equals(testDirection)) {
                 return true;
@@ -25,7 +25,7 @@ public class CsvTransactionsParser implements TransactionParser {
         }
         return false;
     }
-    public boolean is_csvFile (File file) {
+    public boolean isCsvFile (File file) {
         if (file.getName().endsWith("csv")) {
             return true;
         }
@@ -34,8 +34,8 @@ public class CsvTransactionsParser implements TransactionParser {
     public Currency setValidCurrency (String currency) {
         return Currency.getInstance(currency);
     }
-    CsvTransactionsParser(int numberOfFields) {
-        this.numberOfFields = numberOfFields;
+    CsvTransactionsParser(int number_of_fields) {
+        this.number_of_fields = number_of_fields;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class CsvTransactionsParser implements TransactionParser {
         List<Transaction> transactions = new ArrayList<>();
 
         try {
-            if (!is_csvFile(transactionsFile)) {
-                throw new FontFormatException("");
+            if (!isCsvFile(transactionsFile)) {
+                throw new FontFormatException("Invalid File Type");
             }
 
             BufferedReader csvReader = new BufferedReader(new FileReader(transactionsFile));
@@ -57,7 +57,7 @@ public class CsvTransactionsParser implements TransactionParser {
                 String[] values = line.split(",");
                 Transaction temp = new Transaction();
                 //no. of fields validation
-                if (values.length != numberOfFields) {
+                if (values.length != number_of_fields) {
                     throw new ArrayIndexOutOfBoundsException();
                 }
                 //description mandatory validation
@@ -72,7 +72,7 @@ public class CsvTransactionsParser implements TransactionParser {
                     System.out.println("Missing Direction In Row No. " + rowNumber);
                 }
                 //direction input validation
-                else if (is_validDirection(values[1])) {
+                else if (isValidDirection(values[1])) {
                     temp.setDirection(values[1]);
                 }
                 else {
@@ -80,7 +80,6 @@ public class CsvTransactionsParser implements TransactionParser {
                 }
                 temp.setAmount(new BigDecimal(values[2]));
                 //currency validation
-
                 temp.setCurrency(setValidCurrency(values[3]));
                 transactions.add(temp);
             }
@@ -89,15 +88,14 @@ public class CsvTransactionsParser implements TransactionParser {
             Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
-        //amount validation
         } catch (IllegalArgumentException ex) {
-            System.out.println("Invalid Amount In Row No. " + rowNumber);
+            System.out.println(ex);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("Invalid Number Of Fields");
+            System.out.println(ex);
         } catch (InputMismatchException ex) {
-            System.out.println("Invalid Direction In Row No. " + rowNumber);
+            System.out.println(ex);
         } catch (FontFormatException ex) {
-            System.out.println("Invalid File Type");
+            System.out.println(ex);
         }
 
         return transactions;
