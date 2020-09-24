@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 
 public class CsvTransactionsParser implements TransactionParser {
     int numberOfFields;
-    enum Directions {
+    enum Direction {
         Credit, Debit;
     }
     public boolean is_validDirection (String testDirection) {
-        for (Directions d : Directions.values() ) {
+        for (Direction d : Direction.values() ) {
             if (d.name().equals(testDirection)) {
                 return true;
             }
