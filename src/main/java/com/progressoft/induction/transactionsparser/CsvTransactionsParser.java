@@ -1,108 +1,114 @@
 package com.progressoft.induction.transactionsparser;
 
-import java.awt.*;
+import exceptions.TransactionsFolderProcessorException;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.InputMismatchException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CsvTransactionsParser implements TransactionParser {
-    private int number_of_fields;
-
-    public boolean isValidDirection(String testDirection) {
-        for (Direction d : Direction.values()) {
-            if (d.name().equals(testDirection)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    private int numberOfFields;
 
     public enum Direction {
         Credit, Debit;
-    }
 
-    public boolean isCsvFile(File file) {
-        if (file.getName().endsWith("csv")) {
-            return true;
+        private static boolean isValidDirection(String testDirection) {
+            for (Direction d : Direction.values()) {
+                if (d.name().equals(testDirection)) {
+                    return true;
+                }
+            }
+            return false;
         }
-        return false;
+
+        public static class DirectionException extends RuntimeException {
+            public DirectionException(String message) {
+                super(message);
+            }
+        }
     }
 
-    public Currency setValidCurrency(String currency) {
+    private void isNullFile(File file) {
+        if (file == null) {
+            throw new TransactionsFolderProcessorException("Transactions File cannot be null");
+        }
+    }
+
+    private void isExistingFile(File file) {
+        if (!file.exists()) {
+            throw new TransactionsFolderProcessorException("Transactions File does not exist");
+        }
+    }
+
+    private void isCsvFile(File file) {
+        if (!file.getName().endsWith("csv")) {
+            throw new TransactionsFolderProcessorException("Transactions File is not CSV file");
+        }
+    }
+
+    private boolean isValidAmount(String amount) {
+        for (int i = 0; i < amount.length(); i++) {
+            if (!(amount.charAt(i) >= '0' && amount.charAt(i) <= '9'))
+                return false;
+        }
+        return true;
+    }
+
+    private Currency setValidCurrency(String currency, int lineNumber) {
+        try {
+            Currency.getInstance(currency);
+        } catch (IllegalArgumentException e) {
+            throw new TransactionsFolderProcessorException("invalid currency in line "
+                    + lineNumber);
+        }
         return Currency.getInstance(currency);
     }
 
-    CsvTransactionsParser(int number_of_fields) {
-        this.number_of_fields = number_of_fields;
+    CsvTransactionsParser(int numberOfFields) {
+        this.numberOfFields = numberOfFields;
     }
 
     @Override
     public List<Transaction> parse(File transactionsFile) {
-        
-        String line = "";
-        int rowNumber = 0;
+
+        isNullFile(transactionsFile);
+        isExistingFile(transactionsFile);
+        isCsvFile(transactionsFile);
+
         List<Transaction> transactions = new ArrayList<>();
 
         try {
-            if (!isCsvFile(transactionsFile)) {
-                throw new FontFormatException("Invalid File Type");
-            }
-
             BufferedReader csvReader = new BufferedReader(new FileReader(transactionsFile));
-//dfhdfjklvhf
+            String line = "";
+            int lineNumber = 0;
             while( (line = csvReader.readLine()) != null ) {
-                rowNumber++;
+                lineNumber++;
                 String[] values = line.split(",");
                 Transaction temp = new Transaction();
-                //no. of fields validation
-                if (values.length != number_of_fields) {
-                    throw new ArrayIndexOutOfBoundsException();
-                }
-                //description mandatory validation
-                if (values[0].isEmpty()){
-                    System.out.println("Missing Description In Row No. " + rowNumber);
-                }
-                else {
-                    temp.setDescription(values[0]);
-                }
-                //direction mandatory validation
-                if (values[1].isEmpty()) {
-                    System.out.println("Missing Direction In Row No. " + rowNumber);
-                }
-                //direction input validation
-                else if (isValidDirection(values[1])) {
+                if (values.length != numberOfFields)
+                    throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
+                            + lineNumber);
+                temp.setDescription(values[0]);
+                if (Direction.isValidDirection(values[1]))
                     temp.setDirection(values[1]);
-                }
-                else {
-                    throw new InputMismatchException();
-                }
-                temp.setAmount(new BigDecimal(values[2]));
-                //currency validation
-                temp.setCurrency(setValidCurrency(values[3]));
+                else
+                    throw new Direction.DirectionException("Invalid Direction Value " + values[1]);
+                if (isValidAmount(values[2]))
+                    temp.setAmount(new BigDecimal(values[2]));
+                else
+                    throw new TransactionsFolderProcessorException("invalid amount in line "
+                            + lineNumber);
+                temp.setCurrency(setValidCurrency(values[3], lineNumber));
                 transactions.add(temp);
             }
             
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            System.out.println(ex);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println(ex);
-        } catch (InputMismatchException ex) {
-            System.out.println(ex);
-        } catch (FontFormatException ex) {
-            System.out.println(ex);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return transactions;

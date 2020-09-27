@@ -1,6 +1,6 @@
 package com.progressoft.induction.transactionsparser;
 
-
+import exceptions.TransactionsFolderProcessorException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
