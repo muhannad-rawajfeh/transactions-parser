@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-
-/*TODO please consider Java Source Files convention here:
+/*
  1) Class or interface statement first
  2) Class static variables
  3) Instance variables
@@ -20,15 +19,24 @@ import java.util.List;
  5) Methods
  */
 public class CsvTransactionsParser implements TransactionParser {
-    private int numberOfFields;
+    private final int numberOfFields;
 
-    //TODO use regex instead
-    private boolean isValidAmount(String amount) {
-        for (int i = 0; i < amount.length(); i++) {
-            if (!(amount.charAt(i) >= '0' && amount.charAt(i) <= '9'))
-                return false;
+    CsvTransactionsParser(int numberOfFields) {
+        this.numberOfFields = numberOfFields;
+    }
+
+    private void isValidFields(String[] values, int lineNumber) {
+        if (values.length != numberOfFields) {
+            throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
+                    + lineNumber);
         }
-        return true;
+    }
+
+    private String isValidAmount(String amount, int lineNumber) {
+        if (amount.matches("\\d+")) {
+            return amount;
+        }
+        throw new TransactionsFolderProcessorException("invalid amount in line " + lineNumber);
     }
 
     private void isNullFile(File file) {
@@ -58,7 +66,6 @@ public class CsvTransactionsParser implements TransactionParser {
         }
     }
 
-    //TODO parse method needs to be smaller and cleaner
     @Override
     public List<Transaction> parse(File transactionsFile) {
 
@@ -75,27 +82,11 @@ public class CsvTransactionsParser implements TransactionParser {
             while ((line = csvReader.readLine()) != null) {
                 lineNumber++;
                 String[] values = line.split(",");
+                isValidFields(values, lineNumber);
                 Transaction temp = new Transaction();
-                 /* TODO see statement conventions in reading materials
-                if statements always use braces, {}. Avoid the following error-prone form:
-
-                if (condition) //AVOID! THIS OMITS THE BRACES {}!
-                     statement;
-                * */
-                if (values.length != numberOfFields)
-                    throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
-                            + lineNumber);
                 temp.setDescription(values[0]);
-                if (Direction.isValidDirection(values[1]))
-                    temp.setDirection(values[1]);
-                else
-                    throw new Direction.DirectionException("Invalid Direction Value " + values[1]);
-                //TODO move the above validation inside the enum
-                if (isValidAmount(values[2]))
-                    temp.setAmount(new BigDecimal(values[2]));
-                else
-                    throw new TransactionsFolderProcessorException("invalid amount in line "
-                            + lineNumber);
+                temp.setDirection(Direction.isValidDirection(values[1]));
+                temp.setAmount(new BigDecimal(isValidAmount((values[2]), lineNumber)));
                 temp.setCurrency(setValidCurrency(values[3], lineNumber));
                 transactions.add(temp);
             }
@@ -103,31 +94,6 @@ public class CsvTransactionsParser implements TransactionParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return transactions;
-    }
-
-    CsvTransactionsParser(int numberOfFields) {
-        this.numberOfFields = numberOfFields;
-    }
-
-    //TODO : move the enum outside the parser
-    public enum Direction {
-        Credit, Debit;
-
-        private static boolean isValidDirection(String testDirection) {
-            for (Direction d : Direction.values()) {
-                if (d.name().equals(testDirection)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static class DirectionException extends RuntimeException {
-            public DirectionException(String message) {
-                super(message);
-            }
-        }
     }
 }

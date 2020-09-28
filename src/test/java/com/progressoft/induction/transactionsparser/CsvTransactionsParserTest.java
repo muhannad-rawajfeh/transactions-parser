@@ -84,7 +84,7 @@ class CsvTransactionsParserTest {
 
     @Test
     void givenInvalidTransactionDirection_whenParse_thenShouldThrowException() {
-        String message = Assertions.assertThrows(CsvTransactionsParser.Direction.DirectionException.class,
+        String message = Assertions.assertThrows(Direction.DirectionException.class,
                 () -> parser.parse(getTransactionsFile("invalid-direction.csv"))).getMessage();
 
         Assertions.assertEquals("Invalid Direction Value ddd", message);
