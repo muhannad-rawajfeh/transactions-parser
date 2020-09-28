@@ -11,26 +11,24 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
+
+/*TODO please consider Java Source Files convention here:
+ 1) Class or interface statement first
+ 2) Class static variables
+ 3) Instance variables
+ 4) Constructors
+ 5) Methods
+ */
 public class CsvTransactionsParser implements TransactionParser {
     private int numberOfFields;
 
-    public enum Direction {
-        Credit, Debit;
-
-        private static boolean isValidDirection(String testDirection) {
-            for (Direction d : Direction.values()) {
-                if (d.name().equals(testDirection)) {
-                    return true;
-                }
-            }
-            return false;
+    //TODO use regex instead
+    private boolean isValidAmount(String amount) {
+        for (int i = 0; i < amount.length(); i++) {
+            if (!(amount.charAt(i) >= '0' && amount.charAt(i) <= '9'))
+                return false;
         }
-
-        public static class DirectionException extends RuntimeException {
-            public DirectionException(String message) {
-                super(message);
-            }
-        }
+        return true;
     }
 
     private void isNullFile(File file) {
@@ -51,28 +49,16 @@ public class CsvTransactionsParser implements TransactionParser {
         }
     }
 
-    private boolean isValidAmount(String amount) {
-        for (int i = 0; i < amount.length(); i++) {
-            if (!(amount.charAt(i) >= '0' && amount.charAt(i) <= '9'))
-                return false;
-        }
-        return true;
-    }
-
     private Currency setValidCurrency(String currency, int lineNumber) {
         try {
-            Currency.getInstance(currency);
+            return Currency.getInstance(currency);
         } catch (IllegalArgumentException e) {
             throw new TransactionsFolderProcessorException("invalid currency in line "
                     + lineNumber);
         }
-        return Currency.getInstance(currency);
     }
 
-    CsvTransactionsParser(int numberOfFields) {
-        this.numberOfFields = numberOfFields;
-    }
-
+    //TODO parse method needs to be smaller and cleaner
     @Override
     public List<Transaction> parse(File transactionsFile) {
 
@@ -86,10 +72,16 @@ public class CsvTransactionsParser implements TransactionParser {
             BufferedReader csvReader = new BufferedReader(new FileReader(transactionsFile));
             String line = "";
             int lineNumber = 0;
-            while( (line = csvReader.readLine()) != null ) {
+            while ((line = csvReader.readLine()) != null) {
                 lineNumber++;
                 String[] values = line.split(",");
                 Transaction temp = new Transaction();
+                 /* TODO see statement conventions in reading materials
+                if statements always use braces, {}. Avoid the following error-prone form:
+
+                if (condition) //AVOID! THIS OMITS THE BRACES {}!
+                     statement;
+                * */
                 if (values.length != numberOfFields)
                     throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
                             + lineNumber);
@@ -98,6 +90,7 @@ public class CsvTransactionsParser implements TransactionParser {
                     temp.setDirection(values[1]);
                 else
                     throw new Direction.DirectionException("Invalid Direction Value " + values[1]);
+                //TODO move the above validation inside the enum
                 if (isValidAmount(values[2]))
                     temp.setAmount(new BigDecimal(values[2]));
                 else
@@ -106,11 +99,35 @@ public class CsvTransactionsParser implements TransactionParser {
                 temp.setCurrency(setValidCurrency(values[3], lineNumber));
                 transactions.add(temp);
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return transactions;
+    }
+
+    CsvTransactionsParser(int numberOfFields) {
+        this.numberOfFields = numberOfFields;
+    }
+
+    //TODO : move the enum outside the parser
+    public enum Direction {
+        Credit, Debit;
+
+        private static boolean isValidDirection(String testDirection) {
+            for (Direction d : Direction.values()) {
+                if (d.name().equals(testDirection)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static class DirectionException extends RuntimeException {
+            public DirectionException(String message) {
+                super(message);
+            }
+        }
     }
 }
