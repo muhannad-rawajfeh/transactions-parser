@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.Objects;
 
-class CsvTransactionsParserTest {
-
+class CsvTransactionsParserTestCsvParser {
 
     public static final int NUMBER_OF_FIELDS = 4;
 
@@ -48,13 +47,11 @@ class CsvTransactionsParserTest {
 
     @Test
     void givenInvalidNumberOfFieldsInLineOne_whenParse_thenShouldThrowException() {
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-line-1.csv"))).getMessage();
 
         Assertions.assertEquals("Invalid Number of Fields in line 1", message);
     }
-
 
     @Test
     void givenInvalidNumberOfFieldsInLineFour_whenParse_thenShouldThrowException() {
@@ -75,7 +72,6 @@ class CsvTransactionsParserTest {
 
     @Test
     void givenInvalidCurrency_whenParse_thenShouldThrowException() {
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-currency.csv"))).getMessage();
 
@@ -93,8 +89,7 @@ class CsvTransactionsParserTest {
 
     private File getTransactionsFile(String s) {
         return new File(
-                Objects.requireNonNull(CsvTransactionsParserTest.class.getClassLoader().getResource(s)).getFile()
+                Objects.requireNonNull(CsvTransactionsParserTestCsvParser.class.getClassLoader().getResource(s)).getFile()
         );
     }
-
 }
