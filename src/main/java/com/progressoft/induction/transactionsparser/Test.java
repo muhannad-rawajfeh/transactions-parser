@@ -1,17 +1,17 @@
 package com.progressoft.induction.transactionsparser;
 
 import java.io.File;
-import java.util.List;
+
 
 public class Test {
 
     public static void main(String[] args) {
         String path = "/home/user/IdeaProjects/transactionsparser/src/main/resources/transactions.csv";
-        File file = new File(path);
-        CsvTransactionsParser p = new CsvTransactionsParser(4);
-        List<Transaction> parse = p.parse(file);
-        for(Transaction ob: parse) {
-            System.out.println(ob.toString());
+        File fileToParse = new File(path);
+        final int NUMBER_OF_FIELDS = 4;
+        CsvTransactionsParser csvTransactionsParser = new CsvTransactionsParser(NUMBER_OF_FIELDS);
+        for(Transaction t: csvTransactionsParser.parse(fileToParse)) {
+            System.out.println(t.toString());
         }
     }
 }

@@ -1,103 +1,99 @@
 package com.progressoft.induction.transactionsparser;
 
-import java.awt.*;
+import exceptions.TransactionsFolderProcessorException;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 
+/*
+ 1) Class or interface statement first
+ 2) Class static variables
+ 3) Instance variables
+ 4) Constructors
+ 5) Methods
+ */
 public class CsvTransactionsParser implements TransactionParser {
-    private int number_of_fields;
-    public enum Directions {
-        Credit, Debit;
+    private final int numberOfFields;
+
+    CsvTransactionsParser(int numberOfFields) {
+        this.numberOfFields = numberOfFields;
     }
-    public boolean isValidDirection (String testDirection) {
-        for (Directions d : Directions.values() ) {
-            if (d.name().equals(testDirection)) {
-                return true;
-            }
+
+    private void isValidFields(String[] values, int lineNumber) {
+        if (values.length != numberOfFields) {
+            throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
+                    + lineNumber);
         }
-        return false;
     }
-    public boolean isCsvFile (File file) {
-        if (file.getName().endsWith("csv")) {
-            return true;
+
+    private String isValidAmount(String amount, int lineNumber) {
+        if (amount.matches("\\d+")) {
+            return amount;
         }
-        return false;
+        throw new TransactionsFolderProcessorException("invalid amount in line " + lineNumber);
     }
-    public Currency setValidCurrency (String currency) {
-        return Currency.getInstance(currency);
+
+    private void isNullFile(File file) {
+        if (file == null) {
+            throw new TransactionsFolderProcessorException("Transactions File cannot be null");
+        }
     }
-    CsvTransactionsParser(int number_of_fields) {
-        this.number_of_fields = number_of_fields;
+
+    private void isExistingFile(File file) {
+        if (!file.exists()) {
+            throw new TransactionsFolderProcessorException("Transactions File does not exist");
+        }
+    }
+
+    private void isCsvFile(File file) {
+        if (!file.getName().endsWith("csv")) {
+            throw new TransactionsFolderProcessorException("Transactions File is not CSV file");
+        }
+    }
+
+    private Currency setValidCurrency(String currency, int lineNumber) {
+        try {
+            return Currency.getInstance(currency);
+        } catch (IllegalArgumentException e) {
+            throw new TransactionsFolderProcessorException("invalid currency in line "
+                    + lineNumber);
+        }
     }
 
     @Override
     public List<Transaction> parse(File transactionsFile) {
-        
-        String line = "";
-        int rowNumber = 0;
+
+        isNullFile(transactionsFile);
+        isExistingFile(transactionsFile);
+        isCsvFile(transactionsFile);
+
         List<Transaction> transactions = new ArrayList<>();
 
         try {
-            if (!isCsvFile(transactionsFile)) {
-                throw new FontFormatException("Invalid File Type");
-            }
-
             BufferedReader csvReader = new BufferedReader(new FileReader(transactionsFile));
-
-            while( (line = csvReader.readLine()) != null ) {
-                rowNumber++;
+            String line = "";
+            int lineNumber = 0;
+            while ((line = csvReader.readLine()) != null) {
+                lineNumber++;
                 String[] values = line.split(",");
+                isValidFields(values, lineNumber);
                 Transaction temp = new Transaction();
-                //no. of fields validation
-                if (values.length != number_of_fields) {
-                    throw new ArrayIndexOutOfBoundsException();
-                }
-                //description mandatory validation
-                if (values[0].isEmpty()){
-                    System.out.println("Missing Description In Row No. " + rowNumber);
-                }
-                else {
-                    temp.setDescription(values[0]);
-                }
-                //direction mandatory validation
-                if (values[1].isEmpty()) {
-                    System.out.println("Missing Direction In Row No. " + rowNumber);
-                }
-                //direction input validation
-                else if (isValidDirection(values[1])) {
-                    temp.setDirection(values[1]);
-                }
-                else {
-                    throw new InputMismatchException();
-                }
-                temp.setAmount(new BigDecimal(values[2]));
-                //currency validation
-                temp.setCurrency(setValidCurrency(values[3]));
+                temp.setDescription(values[0]);
+                temp.setDirection(Direction.isValidDirection(values[1]));
+                temp.setAmount(new BigDecimal(isValidAmount((values[2]), lineNumber)));
+                temp.setCurrency(setValidCurrency(values[3], lineNumber));
                 transactions.add(temp);
             }
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CsvTransactionsParser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            System.out.println(ex);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println(ex);
-        } catch (InputMismatchException ex) {
-            System.out.println(ex);
-        } catch (FontFormatException ex) {
-            System.out.println(ex);
-        }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return transactions;
     }
 }
