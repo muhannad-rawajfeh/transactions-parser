@@ -14,7 +14,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlTransactionsParser implements TransactionParser {
     private final int numberOfFields;
-
+	// Todo: add fields validation
     XmlTransactionsParser(int numberOfFields) {
         this.numberOfFields = numberOfFields;
     }
@@ -29,6 +29,7 @@ public class XmlTransactionsParser implements TransactionParser {
 		final List<Transaction> transactions = new ArrayList<>();
         
     	try {
+
         	SAXParserFactory factory = SAXParserFactory.newInstance();
 	    	SAXParser saxParser = factory.newSAXParser();
 
