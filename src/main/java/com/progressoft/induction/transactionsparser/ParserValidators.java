@@ -38,6 +38,8 @@ public class ParserValidators {
         }
     }
 
+    //TODO : in isValidAmount & isValidCurrency separate the validation from getting the value,
+    // since these methods doing extra work than what they should
     public static String isValidAmount(String amount, int lineNumber) {
         if (amount.matches("\\d+")) {
             return amount;

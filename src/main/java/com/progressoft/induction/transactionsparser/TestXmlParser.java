@@ -6,6 +6,7 @@ public class TestXmlParser {
 
     public static void main(String[] args) {
 
+        //TODO use relative path, not absolute, as well as in TestCsvParser
         String path = "/home/user/IdeaProjects/transactionsparser/src/main/resources/transactions.xml";
         File fileToParse = new File(path);
         final int NUMBER_OF_FIELDS = 4;
