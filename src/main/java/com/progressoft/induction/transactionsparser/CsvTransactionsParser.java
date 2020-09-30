@@ -31,12 +31,12 @@ public class CsvTransactionsParser implements TransactionParser {
             while ((line = csvReader.readLine()) != null) {
                 lineNumber++;
                 String[] values = line.split(",");
-                ParserValidators.isValidFields(values, lineNumber, numberOfFields);
+                ParserValidators.isValidNoOfFields(values, lineNumber, numberOfFields);
                 Transaction temp = new Transaction();
                 temp.setDescription(values[0]);
-                temp.setDirection(Direction.isValidDirection(values[1]));
-                temp.setAmount(new BigDecimal(ParserValidators.isValidAmount((values[2]), lineNumber)));
-                temp.setCurrency(ParserValidators.isValidCurrency(values[3], lineNumber));
+                temp.setDirection(Direction.getValidDirection((values[1])));
+                temp.setAmount(new BigDecimal(ParserValidators.getValidAmount((values[2]), lineNumber)));
+                temp.setCurrency(ParserValidators.getValidCurrency(values[3], lineNumber));
                 transactions.add(temp);
             }
 

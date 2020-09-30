@@ -1,20 +1,25 @@
 package com.progressoft.induction.transactionsparser;
 
 public enum Direction {
-    //TODO: By convention, enums are constants. In Java, constants are defined in all UPPER_CASE letters.
-    //enum name should be in title case (same as class names).
-    //enum fields should be in all UPPER CASE (same as static final constants).
-    Credit,
-    Debit;
 
-    //TODO : use valueOf method
-    public static String isValidDirection(String direction) {
-        for (Direction d : Direction.values()) {
-            if (d.name().equals(direction)) {
-                return direction;
-            }
+    CREDIT("Credit"),
+    DEBIT("Debit");
+
+    Direction(String value) {
+        this.value = value;
+    }
+
+    private final String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public static Direction getValidDirection(String direction) {
+        if (ParserValidators.isValidDirection(direction)) {
+            return Direction.valueOf(direction.toUpperCase());
         }
-        throw new DirectionException("Invalid Direction Value " + direction);
+        throw new Direction.DirectionException("Invalid Direction Value " + direction);
     }
 
     public static class DirectionException extends RuntimeException {

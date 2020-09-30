@@ -55,7 +55,6 @@ class CsvTransactionsParserTestCsvParser {
 
     @Test
     void givenInvalidNumberOfFieldsInLineFour_whenParse_thenShouldThrowException() {
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-line-4.csv"))).getMessage();
 
@@ -78,9 +77,6 @@ class CsvTransactionsParserTestCsvParser {
         Assertions.assertEquals("invalid currency in line 1", message);
     }
 
-    //TODO handle this test scenario, i changed it to throw the same type of exception like others,
-    // but keep the DirectionException, catch it and rethrow it
-    // add method for validations in the parser validators
     @Test
     void givenInvalidTransactionDirection_whenParse_thenShouldThrowException() {
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
