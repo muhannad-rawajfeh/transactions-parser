@@ -15,10 +15,15 @@ import java.util.List;
 
 public class XmlTransactionsParser implements TransactionParser {
     private final int numberOfElements;
+    private final String eTransaction, eDescription, eDirection, eValue, eCurrency;
 
-    // Todo: add fields validation ? yes please :D
     XmlTransactionsParser(int numberOfElements) {
         this.numberOfElements = numberOfElements;
+        eTransaction = "Transaction";
+        eDescription = "Description";
+        eDirection = "Direction";
+        eValue = "Value";
+        eCurrency = "Currency";
     }
 
     @Override
@@ -51,28 +56,34 @@ public class XmlTransactionsParser implements TransactionParser {
             boolean bValue = false;
             boolean bCurrency = false;
             int lineNumber = 0;
+            int numberOfTags;
             Transaction transaction = null;
 
             @Override
             public void startElement(String uri, String localName, String qName,
                                      Attributes attributes) {
 
-                //TODO extract constants (fields name)
-                if (qName.equalsIgnoreCase("Transaction")) {
+                if (qName.equalsIgnoreCase(eTransaction)) {
                     transaction = new Transaction();
                     lineNumber++;
+                    numberOfTags = 0;
                 }
-                if (qName.equalsIgnoreCase("Description")) {
+                if (qName.equalsIgnoreCase(eDescription)) {
                     bDescription = true;
+                    numberOfTags++;
                 }
-                if (qName.equalsIgnoreCase("Direction")) {
+                if (qName.equalsIgnoreCase(eDirection)) {
                     bDirection = true;
+                    numberOfTags++;
                 }
-                if (qName.equalsIgnoreCase("Value")) {
+                if (qName.equalsIgnoreCase(eValue)) {
                     bValue = true;
+                    numberOfTags++;
                 }
-                if (qName.equalsIgnoreCase("Currency")) {
+                if (qName.equalsIgnoreCase(eCurrency)) {
                     bCurrency = true;
+                    numberOfTags++;
+                    ParserValidators.isValidNoOfElements(numberOfElements, lineNumber, numberOfTags);
                 }
             }
 
@@ -80,19 +91,19 @@ public class XmlTransactionsParser implements TransactionParser {
             public void endElement(String uri, String localName,
                                    String qName) {
 
-                if (qName.equalsIgnoreCase("Transaction")) {
+                if (qName.equalsIgnoreCase(eTransaction)) {
                     transactions.add(transaction);
                 }
-                if (qName.equalsIgnoreCase("Description")) {
+                if (qName.equalsIgnoreCase(eDescription)) {
                     bDescription = false;
                 }
-                if (qName.equalsIgnoreCase("Direction")) {
+                if (qName.equalsIgnoreCase(eDirection)) {
                     bDirection = false;
                 }
-                if (qName.equalsIgnoreCase("Value")) {
+                if (qName.equalsIgnoreCase(eValue)) {
                     bValue = false;
                 }
-                if (qName.equalsIgnoreCase("Currency")) {
+                if (qName.equalsIgnoreCase(eCurrency)) {
                     bCurrency = false;
                 }
             }
