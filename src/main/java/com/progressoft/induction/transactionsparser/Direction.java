@@ -16,10 +16,11 @@ public enum Direction {
     }
 
     public static Direction getValidDirection(String direction) {
-        if (ParserValidators.isValidDirection(direction)) {
+        try {
             return Direction.valueOf(direction.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new Direction.DirectionException("Invalid Direction Value " + direction);
         }
-        throw new Direction.DirectionException("Invalid Direction Value " + direction);
     }
 
     public static class DirectionException extends RuntimeException {

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 public class CsvTransactionsParser implements TransactionParser {
@@ -31,12 +32,22 @@ public class CsvTransactionsParser implements TransactionParser {
             while ((line = csvReader.readLine()) != null) {
                 lineNumber++;
                 String[] values = line.split(",");
-                ParserValidators.isValidNoOfFields(values, lineNumber, numberOfFields);
+                ParserValidators.isValidNoOfFields(values.length, numberOfFields, lineNumber);
+
+                String description = values[0];
+                String direction = values[1];
+                String amount = values[2];
+                String currency = values[3];
+
+                ParserValidators.isValidDirection(direction, lineNumber);
+                ParserValidators.isValidAmount(amount, lineNumber);
+                ParserValidators.isValidCurrency(currency, lineNumber);
+
                 Transaction temp = new Transaction();
-                temp.setDescription(values[0]);
-                temp.setDirection(Direction.getValidDirection((values[1])));
-                temp.setAmount(new BigDecimal(ParserValidators.getValidAmount((values[2]), lineNumber)));
-                temp.setCurrency(ParserValidators.getValidCurrency(values[3], lineNumber));
+                temp.setDescription(description);
+                temp.setDirection(Direction.getValidDirection(direction));
+                temp.setAmount(new BigDecimal(amount));
+                temp.setCurrency(Currency.getInstance(currency));
                 transactions.add(temp);
             }
 

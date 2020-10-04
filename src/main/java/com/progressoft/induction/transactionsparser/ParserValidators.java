@@ -31,8 +31,8 @@ public class ParserValidators {
         }
     }
 
-    public static void isValidNoOfFields(String[] values, int lineNumber, int numberOfFields) {
-        if (values.length != numberOfFields) {
+    public static void isValidNoOfFields(int valuesLength, int numberOfFields, int lineNumber) {
+        if (valuesLength != numberOfFields) {
             throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
                     + lineNumber);
         }
@@ -45,28 +45,23 @@ public class ParserValidators {
         }
     }
 
-    public static boolean isValidDirection(String direction) {
+    public static boolean isValidDirection(String direction, int lineNumber) {
         try {
-            for (Direction d : Direction.values()) {
-                if (d.getValue().equals(direction)) {
-                    return true;
-                }
-            }
-            throw new Direction.DirectionException("Invalid Direction Value " + direction);
-
+            Direction.getValidDirection(direction);
+            return true;
         } catch (Direction.DirectionException e) {
-            throw new TransactionsFolderProcessorException(e.getMessage());
+            throw new TransactionsFolderProcessorException(e.getMessage() + " in line " + lineNumber);
         }
     }
 
-    private static boolean isValidAmount(String amount, int lineNumber) {
+    public static boolean isValidAmount(String amount, int lineNumber) {
         if (amount.matches("\\d+")) {
             return true;
         }
         throw new TransactionsFolderProcessorException("invalid amount in line " + lineNumber);
     }
 
-    private static boolean isValidCurrency(String currency, int lineNumber) {
+    public static boolean isValidCurrency(String currency, int lineNumber) {
         try {
             Currency.getInstance(currency);
         } catch (IllegalArgumentException e) {
@@ -75,17 +70,4 @@ public class ParserValidators {
         return true;
     }
 
-    public static String getValidAmount(String amount, int lineNumber) {
-        if (isValidAmount(amount, lineNumber)) {
-            return amount;
-        }
-        throw new TransactionsFolderProcessorException("invalid amount in line " + lineNumber);
-    }
-
-    public static Currency getValidCurrency(String currency, int lineNumber) {
-        if (isValidCurrency(currency, lineNumber)) {
-            return Currency.getInstance(currency);
-        }
-        throw new TransactionsFolderProcessorException("invalid currency in line " + lineNumber);
-    }
 }

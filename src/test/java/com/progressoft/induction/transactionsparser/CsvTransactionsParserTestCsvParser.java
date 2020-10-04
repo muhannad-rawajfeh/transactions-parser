@@ -13,7 +13,6 @@ class CsvTransactionsParserTestCsvParser {
     public static final int NUMBER_OF_FIELDS = 4;
 
     private CsvTransactionsParser parser;
-    private Object Collection;
 
     @BeforeEach
     void setUp() {
@@ -82,7 +81,7 @@ class CsvTransactionsParserTestCsvParser {
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-direction.csv"))).getMessage();
 
-        Assertions.assertEquals("Invalid Direction Value ddd", message);
+        Assertions.assertEquals("Invalid Direction Value ddd in line 1", message);
     }
 
 
