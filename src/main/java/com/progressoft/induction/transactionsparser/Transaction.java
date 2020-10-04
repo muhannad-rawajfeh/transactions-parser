@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Transaction {
 
     private String description;
-    private String direction;
+    private Direction direction;
     private BigDecimal amount;
     private Currency currency;
 
@@ -19,11 +19,11 @@ public class Transaction {
         this.description = description;
     }
 
-    public String getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(String direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 

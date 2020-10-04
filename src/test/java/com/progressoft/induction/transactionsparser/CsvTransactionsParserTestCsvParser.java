@@ -8,13 +8,11 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.Objects;
 
-class CsvTransactionsParserTest {
-
+class CsvTransactionsParserTestCsvParser {
 
     public static final int NUMBER_OF_FIELDS = 4;
 
     private CsvTransactionsParser parser;
-    private Object Collection;
 
     @BeforeEach
     void setUp() {
@@ -48,17 +46,14 @@ class CsvTransactionsParserTest {
 
     @Test
     void givenInvalidNumberOfFieldsInLineOne_whenParse_thenShouldThrowException() {
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-line-1.csv"))).getMessage();
 
         Assertions.assertEquals("Invalid Number of Fields in line 1", message);
     }
 
-
     @Test
     void givenInvalidNumberOfFieldsInLineFour_whenParse_thenShouldThrowException() {
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-line-4.csv"))).getMessage();
 
@@ -75,26 +70,24 @@ class CsvTransactionsParserTest {
 
     @Test
     void givenInvalidCurrency_whenParse_thenShouldThrowException() {
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-currency.csv"))).getMessage();
 
-        Assertions.assertEquals("invalid currency in line 1",message);
+        Assertions.assertEquals("invalid currency in line 1", message);
     }
 
     @Test
     void givenInvalidTransactionDirection_whenParse_thenShouldThrowException() {
-        String message = Assertions.assertThrows(Direction.DirectionException.class,
+        String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
                 () -> parser.parse(getTransactionsFile("invalid-direction.csv"))).getMessage();
 
-        Assertions.assertEquals("Invalid Direction Value ddd", message);
+        Assertions.assertEquals("Invalid Direction Value ddd in line 1", message);
     }
 
 
     private File getTransactionsFile(String s) {
         return new File(
-                Objects.requireNonNull(CsvTransactionsParserTest.class.getClassLoader().getResource(s)).getFile()
+                Objects.requireNonNull(CsvTransactionsParserTestCsvParser.class.getClassLoader().getResource(s)).getFile()
         );
     }
-
 }

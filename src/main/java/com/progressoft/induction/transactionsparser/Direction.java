@@ -1,16 +1,26 @@
 package com.progressoft.induction.transactionsparser;
 
 public enum Direction {
-    Credit,
-    Debit;
 
-    public static String isValidDirection(String testDirection) {
-        for (Direction d : Direction.values()) {
-            if (d.name().equals(testDirection)) {
-                return testDirection;
-            }
+    CREDIT("Credit"),
+    DEBIT("Debit");
+
+    Direction(String value) {
+        this.value = value;
+    }
+
+    private final String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public static Direction getValidDirection(String direction) {
+        try {
+            return Direction.valueOf(direction.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new Direction.DirectionException("Invalid Direction Value " + direction);
         }
-        throw new Direction.DirectionException("Invalid Direction Value " + testDirection);
     }
 
     public static class DirectionException extends RuntimeException {
