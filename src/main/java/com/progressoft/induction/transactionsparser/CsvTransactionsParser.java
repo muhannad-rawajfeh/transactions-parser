@@ -12,7 +12,7 @@ import java.util.List;
 public class CsvTransactionsParser implements TransactionParser {
     private final int numberOfFields;
 
-    CsvTransactionsParser(int numberOfFields) {
+    public CsvTransactionsParser(int numberOfFields) {
         this.numberOfFields = numberOfFields;
     }
 

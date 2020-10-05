@@ -1,9 +1,13 @@
-package com.progressoft.induction.transactionsparser;
+package com.progressoft.induction.transactionsparser.repo;
+
+import com.progressoft.induction.transactionsparser.CsvTransactionsParser;
+import com.progressoft.induction.transactionsparser.Transaction;
+import com.progressoft.induction.transactionsparser.TransactionParser;
 
 import java.io.File;
 import java.util.List;
 
-public class TestCsvParser {
+public class Test {
 
     public static void main(String[] args) {
 
@@ -14,8 +18,9 @@ public class TestCsvParser {
         TransactionParser csvTransactionsParser = new CsvTransactionsParser(NUMBER_OF_FIELDS);
 
         List<Transaction> transactions = csvTransactionsParser.parse(fileToParse);
+        TransactionsRepository repository = new H2TransactionsRepository();
         for(Transaction t: transactions) {
-            System.out.println(t.toString());
+            repository.saveTransaction(t);
         }
     }
 }
