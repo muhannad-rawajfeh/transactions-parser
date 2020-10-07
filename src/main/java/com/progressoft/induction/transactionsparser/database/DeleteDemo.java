@@ -8,10 +8,10 @@ import java.sql.Statement;
 public class DeleteDemo {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.h2.Driver";
-    static final String DB_URL = "jdbc:h2:~/test";
+    static final String DB_URL = "jdbc:h2:~/db;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE";
 
     //  Database credentials
-    static final String USER = "muhannad";
+    static final String USER = "user";
     static final String PASS = "";
 
     public static void main(String[] args) {

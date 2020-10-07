@@ -8,10 +8,10 @@ import java.sql.Statement;
 public class CreateDemo {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.h2.Driver";
-    static final String DB_URL = "jdbc:h2:~/test";
+    static final String DB_URL = "jdbc:h2:~/db;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE";
 
     //  Database credentials
-    static final String USER = "muhannad";
+    static final String USER = "user";
     static final String PASS = "";
 
     public static void main(String[] args) {
@@ -28,7 +28,7 @@ public class CreateDemo {
             //STEP 3: Execute a query
             System.out.println("Creating table in given database...");
             stmt = conn.createStatement();
-            String sql =  "CREATE TABLE   MY_TRANSACTIONS " +
+            String sql =  "CREATE TABLE MY_TRANSACTIONS " +
                     "(description VARCHAR(50), " +
                     " direction VARCHAR(20), " +
                     " amount VARCHAR(100), " +
