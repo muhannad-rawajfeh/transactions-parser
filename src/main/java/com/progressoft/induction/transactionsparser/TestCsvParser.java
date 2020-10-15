@@ -7,7 +7,7 @@ public class TestCsvParser {
 
     public static void main(String[] args) {
 
-        String path = "./src/main/resources/transactions.csv";
+        String path = args[0];
         File fileToParse = new File(path);
 
         final int NUMBER_OF_FIELDS = 4;
