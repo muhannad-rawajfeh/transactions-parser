@@ -3,7 +3,7 @@
         <Description>Cash withdrawal</Description>
         <Direction>Debit</Direction>
         <Amount>
-            <Value>150</Value>
+            <Value>100</Value>
             <Currency>JOD</Currency>
         </Amount>
     </Transaction>
@@ -11,7 +11,7 @@
         <Description>Salary</Description>
         <Direction>Credit</Direction>
         <Amount>
-            <Value>1000</Value>
+            <Value>500</Value>
             <Currency>USD</Currency>
         </Amount>
     </Transaction>
@@ -19,7 +19,7 @@
         <Description>Bill Payment</Description>
         <Direction>Debit</Direction>
         <Amount>
-            <Value>20</Value>
+            <Value>10</Value>
             <Currency>JOD</Currency>
         </Amount>
     </Transaction>

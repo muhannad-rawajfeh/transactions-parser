@@ -67,7 +67,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
                             <mainClass>
-                                com.progressoft.induction.transactionsparser.TestCsvParser
+                                com.progressoft.induction.transactionsparser.TestParser
                             </mainClass>
                         </manifest>
                     </archive>
