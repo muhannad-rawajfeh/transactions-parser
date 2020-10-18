@@ -1,5 +1,7 @@
 package com.progressoft.induction.transactionsparser;
 
+import exceptions.TransactionsFolderProcessorException;
+
 public class TransactionParserFactory {
 
     private static final int NUMBER_OF_FIELDS = 4;
@@ -12,6 +14,6 @@ public class TransactionParserFactory {
         else if (filePath.endsWith("xml")) {
             return new XmlTransactionsParser(NUMBER_OF_FIELDS);
         }
-        return null;
+        throw new TransactionsFolderProcessorException("Invalid File");
     }
 }
