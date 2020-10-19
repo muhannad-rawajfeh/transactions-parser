@@ -9,8 +9,6 @@ import java.io.File;
 
 class TestTransactionParserFactory {
 
-    private static final int NUMBER_OF_FIELDS = 4;
-
     private TransactionParserFactory transactionParserFactory;
     private TransactionParser parser;
 
