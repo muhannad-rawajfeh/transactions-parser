@@ -2,6 +2,7 @@ package com.progressoft.induction.transactionsparser;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 public class TestParser {
 
@@ -20,6 +21,8 @@ public class TestParser {
     }
 
     private static File getTransactionsFile(String fileName) {
-        return new File("src/main/resources/" + fileName);
+        return new File(
+                Objects.requireNonNull(TestParser.class.getClassLoader().getResource(fileName)).getFile()
+        );
     }
 }

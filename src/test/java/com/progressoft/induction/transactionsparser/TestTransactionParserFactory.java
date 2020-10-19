@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-
 class TestTransactionParserFactory {
 
     private TransactionParserFactory transactionParserFactory;
@@ -21,8 +19,7 @@ class TestTransactionParserFactory {
     @Test
     void givenCsvFile_whenCreateParser_thenShouldReturnCsvParser() {
 
-        String csvFileName = "transactions.csv";
-        parser = transactionParserFactory.createParser(csvFileName);
+        parser = transactionParserFactory.createParser("transactions.csv");
 
         Assertions.assertTrue(parser instanceof CsvTransactionsParser);
     }
@@ -30,8 +27,7 @@ class TestTransactionParserFactory {
     @Test
     void givenXmlFile_whenCreateParser_thenShouldReturnXmlParser() {
 
-        String xmlFileName = "transactions.xml";
-        parser = transactionParserFactory.createParser(xmlFileName);
+        parser = transactionParserFactory.createParser("transactions.xml");
 
         Assertions.assertTrue(parser instanceof XmlTransactionsParser);
     }
@@ -39,10 +35,8 @@ class TestTransactionParserFactory {
     @Test
     void givenInvalidFile_whenCreateParser_thenShouldThrowException() {
 
-        String invalidFileName = "transactions.txt";
-
         String message = Assertions.assertThrows(TransactionsFolderProcessorException.class,
-                () -> transactionParserFactory.createParser(invalidFileName)).getMessage();
+                () -> transactionParserFactory.createParser("transactions.txt")).getMessage();
 
         Assertions.assertEquals("Invalid File", message);
     }
@@ -54,10 +48,5 @@ class TestTransactionParserFactory {
                 () -> transactionParserFactory.createParser(null)).getMessage();
 
         Assertions.assertEquals("File Name is Null", message);
-    }
-
-
-    private File getTransactionsFile(String fileName) {
-        return new File("src/main/resources/" + fileName);
     }
 }
