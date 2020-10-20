@@ -38,7 +38,7 @@ public class ParserValidators {
         }
     }
 
-    public static void isValidNoOfElements(int numberOfElements, int lineNumber, int numberOfTags) {
+    public static void isValidNoOfElements(int numberOfElements, int numberOfTags, int lineNumber) {
         if (numberOfTags != numberOfElements) {
             throw new TransactionsFolderProcessorException("Invalid Number of Fields in line "
                     + lineNumber);
