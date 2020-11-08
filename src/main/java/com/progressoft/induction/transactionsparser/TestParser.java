@@ -13,7 +13,7 @@ public class TestParser {
 
         List<Transaction> transactions = parser.parse(new File (args[0]));
         for(Transaction t: transactions) {
-            System.out.println(t.toString());
+            System.out.println(t);
         }
     }
 }
